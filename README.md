@@ -15,7 +15,7 @@
 
 - 🦋 蝴蝶是我的灵感符号：自由 · 蜕变 · 成长
 
--🍃常常为日常的一些惊喜的小瞬间心动，比如一回头看到了这样一朵发光的云☁️：
+- 🍃常常为日常的一些惊喜的小瞬间心动，比如一回头看到了这样一朵发光的云☁️：
 
 <div align="left">
 <img src=https://github.com/Echooooe/Echooooe/blob/main/770c6670b4cd74c7dde8a1994ced9bf2.jpg width=30% />
