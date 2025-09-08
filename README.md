@@ -1,4 +1,9 @@
-# ✨ 自我介绍
+| 这个作业属于哪个课程 | <[计科23级12班](https://edu.cnblogs.com/campus/gdgy/Class12Grade23ComputerScience)> |
+| --------------------|:-------------------|
+| 这个作业的要求在哪里 | <[自我介绍+软工5问](https://edu.cnblogs.com/campus/gdgy/Class12Grade23ComputerScience/homework/13469)> |
+| 这个作业的目标 | <<br>1.注册并完善 GitHub 和博客园帐号，并掌握 Git/GitHub 使用方法，以此熟悉社区和工具的使用；<br>2.通过发布自我介绍来熟悉 Markdown 语法、排版技巧，学习技术写作、排版能力和培养写规范文档的习惯；<br>3.通过“软工五问”，学习提问的智慧<br>> |
+
+## ✨ 自我介绍
 
 - 🎨 喜欢画画、舞蹈和创造的理想主义 INFJ  
 
