@@ -1,0 +1,46 @@
+# ====================
+# Python 常见忽略文件
+# ====================
+
+# 编译缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 虚拟环境
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 分析工具缓存
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ====================
+# PyCharm / IDE 配置
+# ====================
+
+# JetBrains IDE (PyCharm) 项目配置
+.idea/
+
+# VSCode 配置
+.vscode/
+
+# ====================
+# 系统文件
+# ====================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
