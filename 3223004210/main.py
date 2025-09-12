@@ -1,7 +1,7 @@
 # main.py
 import sys
-from io_utils import read_text_file, write_text_file
-from sim import similarity_ratio
+from src.io_utils import read_text_file, write_text_file
+from src.sim import similarity_ratio
 
 def main():
     """

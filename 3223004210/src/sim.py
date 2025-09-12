@@ -1,7 +1,7 @@
 # sim.py
 import math
 from typing import Dict, Set
-from text_norm import normalize, char_ngrams, counts
+from .text_norm import normalize, char_ngrams, counts
 
 def _dot(a: Dict[str, int], b: Dict[str, int]) -> int:
     """
