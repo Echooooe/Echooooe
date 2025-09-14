@@ -87,3 +87,29 @@ def test_MAIN_R004_005_cli_option_n_invalid(tmp_path):
     # 参数错误：返回码 1，输出中包含 Usage
     assert proc.returncode == 1
     assert "Usage:" in (proc.stdout + proc.stderr)
+
+def test_MAIN_R004_006_write_path_is_directory(tmp_path):
+    """
+    输出路径指向目录：write_text_file 内部调用 Path.write_text 抛 IsADirectoryError，
+    main 捕获后应返回码 2，并在 stderr 打印错误信息。
+    """
+    import sys, subprocess
+    o = tmp_path / "o.txt"; c = tmp_path / "c.txt"; out_dir = tmp_path / "ans_dir"
+    o.write_text("A", encoding="utf-8"); c.write_text("B", encoding="utf-8")
+    out_dir.mkdir()  # 故意把“输出文件”设为一个目录
+    proc = subprocess.run([sys.executable, "main.py", str(o), str(c), str(out_dir)],
+                          capture_output=True, text=True)
+    assert proc.returncode == 2
+    assert proc.stderr.strip() != ""  # 有错误信息
+
+def test_MAIN_R004_007_cli_option_n_not_int(tmp_path):
+    """
+    -n 非整数：参数解析阶段判定为参数错误，打印 Usage，退出码 1。
+    """
+    import sys, subprocess
+    o = tmp_path / "o.txt"; c = tmp_path / "c.txt"; a = tmp_path / "a.txt"
+    o.write_text("A", encoding="utf-8"); c.write_text("B", encoding="utf-8")
+    proc = subprocess.run([sys.executable, "main.py", str(o), str(c), str(a), "-n", "abc"],
+                          capture_output=True, text=True)
+    assert proc.returncode == 1
+    assert "Usage:" in (proc.stdout + proc.stderr)
