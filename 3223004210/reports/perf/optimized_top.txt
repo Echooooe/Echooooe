@@ -1,0 +1,25 @@
+﻿Sun Sep 14 19:39:31 2025    reports\perf\optimized.pstats
+
+         35126 function calls (35015 primitive calls) in 0.246 seconds
+
+   Ordered by: cumulative time
+   List reduced from 316 to 15 due to restriction <15>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     13/1    0.000    0.000    0.246    0.246 {built-in method builtins.exec}
+        1    0.000    0.000    0.246    0.246 <frozen runpy>:201(run_module)
+        1    0.000    0.000    0.244    0.244 <frozen runpy>:65(_run_code)
+        1    0.000    0.000    0.244    0.244 sample_profile.py:1(<module>)
+        1    0.000    0.000    0.217    0.217 sample_profile.py:4(main)
+      300    0.002    0.000    0.216    0.001 sim.py:37(similarity_ratio)
+      600    0.001    0.000    0.199    0.000 text_norm.py:47(counts)
+      600    0.001    0.000    0.197    0.000 __init__.py:595(__init__)
+      600    0.001    0.000    0.196    0.000 __init__.py:669(update)
+      600    0.193    0.000    0.193    0.000 {built-in method _collections._count_elements}
+     14/2    0.000    0.000    0.028    0.014 <frozen importlib._bootstrap>:1349(_find_and_load)
+      6/3    0.000    0.000    0.028    0.009 {built-in method builtins.__import__}
+     14/2    0.000    0.000    0.028    0.014 <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+     12/2    0.000    0.000    0.027    0.013 <frozen importlib._bootstrap>:911(_load_unlocked)
+     30/4    0.000    0.000    0.027    0.007 <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+
+
