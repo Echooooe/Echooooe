@@ -4,13 +4,10 @@ from typing import Dict, Set
 from .text_norm import normalize, char_ngrams, counts
 
 def _dot(a: Dict[str, int], b: Dict[str, int]) -> int:
-    """
-    稀疏向量点积： sum_i (a[i] * b[i])
-    只遍历更短的那个字典，减少哈希查找次数，提高常数效率。
-    """
     if len(a) > len(b):
-        a, b = b, a  # 交换，确保遍历更小的那个
-    return sum(v * b.get(k, 0) for k, v in a.items())
+        a, b = b, a
+    b_get = b.get  # 优化：局部绑定更快
+    return sum(v * b_get(k, 0) for k, v in a.items())
 
 def _norm(a: Dict[str, int]) -> float:
     """

@@ -1,10 +1,14 @@
 # text_norm.py
 import re
 from typing import List, Dict
+from functools import lru_cache
+from collections import Counter
 
 # 用一个预编译的正则来把多个空白（空格、换行、制表符等）压缩成单个空格
 _SPACE_RE = re.compile(r"\s+")
 
+# 优化：给 normalize 加缓存
+@lru_cache(maxsize=4096)
 def normalize(text: str) -> str:
     """
     文本规范化：
@@ -21,6 +25,8 @@ def normalize(text: str) -> str:
     t = _SPACE_RE.sub(" ", t)
     return t
 
+# 优化：给 char_ngrams 加缓存
+@lru_cache(maxsize=4096)
 def char_ngrams(text: str, n: int = 2) -> List[str]:
     """
     基于字符的 n-gram 提取：
@@ -37,12 +43,6 @@ def char_ngrams(text: str, n: int = 2) -> List[str]:
     # 经典滑窗：从 0 到 len(text)-n，逐字符取长度 n 的片段
     return [text[i:i+n] for i in range(len(text) - n + 1)]
 
-def counts(tokens: List[str]) -> Dict[str, int]:
-    """
-    将 n-gram 列表转成“计数字典”（稀疏向量的表现形式）
-    例如：["今天","今天","天晴"] -> {"今天":2, "天晴":1}
-    """
-    d: Dict[str, int] = {}
-    for tk in tokens:
-        d[tk] = d.get(tk, 0) + 1  # d.get(tk,0) 取不存在时的默认 0
-    return d
+# 优化：counts 改用 Counter
+def counts(tokens: list[str]) -> dict[str, int]:
+    return dict(Counter(tokens))
