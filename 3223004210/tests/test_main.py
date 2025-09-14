@@ -41,3 +41,49 @@ def test_MAIN_R004_003_missing_input_files_returncode_2():
     )
     assert proc.returncode == 2
     assert proc.stderr.strip() != ""
+
+def test_MAIN_R004_004_cli_option_n_valid(tmp_path):
+    """
+    [扩展功能] 验证 -n 参数的正确用法：
+    - 场景：提供 -n 3，程序应正常运行并生成结果文件
+    - 断言：退出码为 0，输出文件存在且内容是浮点数两位小数（简单检查）
+    """
+    import sys, subprocess
+    o = tmp_path / "o.txt"
+    c = tmp_path / "c.txt"
+    a = tmp_path / "a.txt"
+    o.write_text("人工智能的重要分支是机器学习。", encoding="utf-8")
+    c.write_text("机器学习是人工智能的重要分支。", encoding="utf-8")
+
+    # -n 3 的调用
+    proc = subprocess.run(
+        [sys.executable, "main.py", str(o), str(c), str(a), "-n", "3"],
+        capture_output=True, text=True
+    )
+    assert proc.returncode == 0, proc.stderr
+    assert a.exists()
+    # 简单校验“X.XX”两位小数
+    out = a.read_text(encoding="utf-8").strip()
+    float(out)  # 能被解析为浮点
+    assert len(out.split(".")[1]) == 2  # 恰两位小数
+
+def test_MAIN_R004_005_cli_option_n_invalid(tmp_path):
+    """
+    [扩展功能] 校验 -n 的非法值处理：
+    - 场景：-n 0（非正整数）
+    - 期望：解析阶段判定为参数错误，打印 Usage，退出码=1
+    """
+    import sys, subprocess
+    o = tmp_path / "o.txt"
+    c = tmp_path / "c.txt"
+    a = tmp_path / "a.txt"
+    o.write_text("A", encoding="utf-8")
+    c.write_text("B", encoding="utf-8")
+
+    proc = subprocess.run(
+        [sys.executable, "main.py", str(o), str(c), str(a), "-n", "0"],
+        capture_output=True, text=True
+    )
+    # 参数错误：返回码 1，输出中包含 Usage
+    assert proc.returncode == 1
+    assert "Usage:" in (proc.stdout + proc.stderr)

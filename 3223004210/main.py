@@ -1,49 +1,97 @@
 # main.py
+"""
+命令行入口（带扩展功能 -n）：
+- 基础功能：读取两段文本 -> 计算相似度 -> 写入 ans.txt（保留两位小数+换行）
+- 扩展功能：可选参数 -n N 指定字符 n-gram 的窗口大小（默认 2）
+- 退出码约定（与原先一致）：
+    1：参数错误（例如缺少文件路径、-n 非正整数等）
+    2：运行期异常（I/O 错误、读取失败等）
+"""
 import sys
 from src.io_utils import read_text_file, write_text_file
 from src.sim import similarity_ratio
 
-def main():
+# 统一的用法提示文本（参数错误时打印）
+USAGE = "Usage: python main.py <orig_path> <copy_path> <ans_path> [-n N]"
+
+def _parse_cli(argv):
     """
-    程序入口。
-    命令行参数：
-      argv[1] = 原文文件绝对路径
-      argv[2] = 抄袭版文件绝对路径
-      argv[3] = 答案输出文件绝对路径
-    输出：
-      在 argv[3] 指定路径写入形如 "0.78\n" 的两位小数字符串
-    退出码：
-      - 正常：0
-      - 参数错误：1
-      - 运行期异常（I/O等）：2
+    轻量命令行解析（不引入 argparse，保持与原逻辑一致）：
+    支持三种传参方式：
+      1) python main.py orig.txt copy.txt ans.txt
+      2) python main.py orig.txt copy.txt ans.txt -n 3
+      3) python main.py -n=3 orig.txt copy.txt ans.txt
+    返回: (orig_path, copy_path, ans_path, n)
     """
-    # 参数个数必须是 4（脚本名 + 3 个参数）
-    if len(sys.argv) != 4:
-        # 打印简明用法提示到 stdout（或 stderr 均可）；课程评测只看输出文件，不看这里
-        print("Usage: python main.py <orig_path> <copy_path> <ans_path>")
+    n = 2                      # 默认 n-gram 窗口大小（扩展功能默认值）
+    files = []                 # 收集位置参数（3 个文件路径）
+    i = 0
+    while i < len(argv):
+        tok = argv[i]
+        # 形式 1：-n 3
+        if tok == "-n":
+            # 缺少 N
+            if i + 1 >= len(argv):
+                print(USAGE)
+                sys.exit(1)
+            # N 必须是 int 且 > 0
+            try:
+                n = int(argv[i + 1])
+            except ValueError:
+                print(USAGE)
+                sys.exit(1)
+            i += 2
+            continue
+        # 形式 2：-n=3
+        elif tok.startswith("-n="):
+            try:
+                n = int(tok.split("=", 1)[1])
+            except ValueError:
+                print(USAGE)
+                sys.exit(1)
+            i += 1
+            continue
+        # 其他：位置参数（文件路径）
+        else:
+            files.append(tok)
+            i += 1
+
+    # 必须严格 3 个文件路径；n 必须为正整数
+    if len(files) != 3 or n <= 0:
+        print(USAGE)
         sys.exit(1)
 
-    # 拿到三个路径
-    orig_path, copy_path, ans_path = sys.argv[1], sys.argv[2], sys.argv[3]
+    return files[0], files[1], files[2], n
+
+def main():
+    """
+    主流程：
+      1) 解析命令行参数（兼容旧用法 + 扩展 -n）
+      2) 安全读取文件（UTF-8, ignore）
+      3) 计算相似度（0.00~1.00）
+      4) 输出到目标文件（两位小数+换行）
+    异常处理：
+      - 任何运行期异常 -> 打印到 stderr，退出码 2
+    """
+    # 解析参数（内部会在参数错误时退出码 1）
+    orig_path, copy_path, ans_path, n = _parse_cli(sys.argv[1:])
 
     try:
-        # 读取两个输入文件（UTF-8，非法字符忽略）
+        # 读取输入
         orig_text = read_text_file(orig_path)
         copy_text = read_text_file(copy_path)
 
-        # 计算相似度（默认 2-gram 余弦，相同极短文本退化为 Jaccard）
-        score = similarity_ratio(orig_text, copy_text)  # 返回 0.0 ~ 1.0 的浮点数
+        # 计算相似度（扩展：n 可调；默认 2）
+        score = similarity_ratio(orig_text, copy_text, n=n)
 
-        # 题目要求：答案文件写入“浮点型，精确到小数点后两位”
-        # f"{score:.2f}\n" 会四舍五入保留两位，并加换行（有些评测会严格比较换行）
+        # 写出结果：四舍五入保留两位 + 换行
         write_text_file(ans_path, f"{score:.2f}\n")
 
     except Exception as e:
-        # 任何异常都输出简短错误信息到 stderr，并用非零码退出
-        # 这样既不会“异常退出”扣分，也方便你排查问题
+        # 与原逻辑一致：运行期异常 -> stderr + 退出码 2
         sys.stderr.write(str(e) + "\n")
         sys.exit(2)
 
-# 仅当直接执行 main.py 时运行 main()；被当作模块导入时不会触发
+# 脚本直接执行时才运行 main；被 import 时不执行
 if __name__ == "__main__":
     main()
