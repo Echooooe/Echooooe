@@ -1,0 +1,25 @@
+[MASTER]
+ignore=venv,.venv,__pycache__,build,dist,.git
+recursive=yes
+jobs=0
+
+[MESSAGES CONTROL]
+disable=
+    invalid-name,
+    missing-module-docstring,
+    missing-class-docstring,
+    missing-function-docstring
+
+[FORMAT]
+max-line-length=100
+indent-string='    '
+
+[BASIC]
+good-names=i,j,k,x,y,z,_,n,df,arr
+const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+variable-rgx=^[a-z_][a-z0-9_]*$
+argument-rgx=^[a-z_][a-z0-9_]*$
+attr-rgx=^[a-z_][a-z0-9_]*$
+function-rgx=^[a-z_][a-z0-9_]*$
+method-rgx=^[a-z_][a-z0-9_]*$
+class-rgx=^[A-Z][a-zA-Z0-9]+$

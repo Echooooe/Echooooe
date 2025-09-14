@@ -1,0 +1,17 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["."]
+exclude = ["venv", ".venv", "__pycache__", "build", "dist", ".git"]
+
+[tool.ruff.lint]
+select = ["F","E","W","I","UP","B","C90"]
+ignore = []
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.isort]
+profile = "black"
+line_length = 100
