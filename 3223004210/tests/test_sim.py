@@ -1,5 +1,7 @@
 # 覆盖 src/sim.py::similarity_ratio 的关键分支与性质
 from src.sim import similarity_ratio
+# 覆盖 _jaccard_chars 的极端分支（通过外部 API 很难走到）
+from src.sim import _jaccard_chars
 
 def test_SIM_R002_001_empty_both_returns_one():
     # 目的：两者都为空 -> 相似度 1.0
@@ -33,3 +35,12 @@ def test_SIM_R002_006_paraphrase_higher_than_unrelated():
     b = "人工智能的重要分支之一是机器学习。"
     c = "今天天气晴朗，适合跑步。"
     assert similarity_ratio(a, b) > similarity_ratio(a, c)
+
+def test_SIM_R002_007_jaccard_both_empty_internal():
+    """两个集合都空 -> 定义为 1.0（覆盖 sim.py: 行 30）"""
+    assert _jaccard_chars("", "") == 1.0
+
+def test_SIM_R002_008_jaccard_one_empty_internal():
+    """一空一非空 -> 0.0（覆盖 sim.py: 行 32）"""
+    assert _jaccard_chars("A", "") == 0.0
+    assert _jaccard_chars("", "A") == 0.0
