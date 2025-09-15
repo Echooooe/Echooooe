@@ -12,8 +12,8 @@
 + 基于 n-gram（默认 n=2）的文本相似度计算（Jaccard/重叠度等内部实现见 `src/`）
 + 文本清洗与规范化（大小写统一、空白/标点处理等，见 `src/text_norm.py`）
 + 清晰的输入/输出约定与**异常分类处理**（文件不存在、权限、编码错误等 → `stderr` + 退出码 2）
-+ **单元测试**与**分支覆盖率（branch coverage）**报告
-+ 代码质量检查**（Pylint 10/10、Ruff/Black/isort 已通过）
++ **单元测试**与分支覆盖率（branch coverage）报告
++ 代码质量检查（Pylint 10/10、Ruff/Black/isort 已通过）
 
 ## 三、运行环境
 
