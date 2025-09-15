@@ -1,0 +1,12 @@
+# 项目产物
+coverage.xml
+.coverage
+reports/tests/coverage_html/
+
+# Python/工具缓存（子目录级）
+__pycache__/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+*.py[cod]
+.vs/
