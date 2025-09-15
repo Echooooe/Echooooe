@@ -1,6 +1,7 @@
 # io_utils.py
 from pathlib import Path  # Path 对象比字符串更安全、可跨平台
 
+
 def read_text_file(path: str) -> str:
     """
     安全地读取文本文件（UTF-8），并忽略无法解码的非法字符。
@@ -17,6 +18,7 @@ def read_text_file(path: str) -> str:
         raise FileNotFoundError(f"Input file not found: {path}")
     # 读取：UTF-8 编码；errors='ignore' 表示遇到非法字节就跳过，避免解码异常中断程序
     return p.read_text(encoding="utf-8", errors="ignore")
+
 
 def write_text_file(path: str, content: str) -> None:
     """

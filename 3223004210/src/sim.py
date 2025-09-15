@@ -1,19 +1,22 @@
 # sim.py
 import math
-from typing import Dict, Set
-from .text_norm import normalize, char_ngrams, counts
 
-def _dot(a: Dict[str, int], b: Dict[str, int]) -> int:
+from .text_norm import char_ngrams, counts, normalize
+
+
+def _dot(a: dict[str, int], b: dict[str, int]) -> int:
     if len(a) > len(b):
         a, b = b, a
     b_get = b.get  # 优化：局部绑定更快
     return sum(v * b_get(k, 0) for k, v in a.items())
 
-def _norm(a: Dict[str, int]) -> float:
+
+def _norm(a: dict[str, int]) -> float:
     """
     向量 L2 范数：sqrt(sum_i (a[i]^2))
     """
-    return math.sqrt(sum(v*v for v in a.values()))
+    return math.sqrt(sum(v * v for v in a.values()))
+
 
 def _jaccard_chars(a: str, b: str) -> float:
     """
@@ -24,8 +27,8 @@ def _jaccard_chars(a: str, b: str) -> float:
       - 两者皆空 => 定义为 1.0（皆无信息视为相同）
       - 一空一非空 => 0.0
     """
-    sa: Set[str] = set(a)
-    sb: Set[str] = set(b)
+    sa: set[str] = set(a)
+    sb: set[str] = set(b)
     if not sa and not sb:
         return 1.0
     if not sa or not sb:
@@ -33,6 +36,7 @@ def _jaccard_chars(a: str, b: str) -> float:
     inter = len(sa & sb)
     union = len(sa | sb)
     return inter / union if union else 0.0  # 正常不会出现 union=0
+
 
 def similarity_ratio(orig: str, copy: str, n: int = 2) -> float:
     """

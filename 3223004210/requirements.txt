@@ -1,2 +1,5 @@
+# Runtime dependencies for this project
+# Python >= 3.10 (tested on 3.12)
+#测试工具
 pytest>=8,<9
 pytest-cov>=5,<6

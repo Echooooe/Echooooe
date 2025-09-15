@@ -1,11 +1,11 @@
 # text_norm.py
 import re
-from typing import List, Dict
-from functools import lru_cache
 from collections import Counter
+from functools import lru_cache
 
 # 用一个预编译的正则来把多个空白（空格、换行、制表符等）压缩成单个空格
 _SPACE_RE = re.compile(r"\s+")
+
 
 # 优化：给 normalize 加缓存
 @lru_cache(maxsize=4096)
@@ -25,9 +25,10 @@ def normalize(text: str) -> str:
     t = _SPACE_RE.sub(" ", t)
     return t
 
+
 # 优化：给 char_ngrams 加缓存
 @lru_cache(maxsize=4096)
-def char_ngrams(text: str, n: int = 2) -> List[str]:
+def char_ngrams(text: str, n: int = 2) -> list[str]:
     """
     基于字符的 n-gram 提取：
     给定字符串 text，提取长度为 n 的所有连续子串。
@@ -41,7 +42,8 @@ def char_ngrams(text: str, n: int = 2) -> List[str]:
     if len(text) < n:
         return []
     # 经典滑窗：从 0 到 len(text)-n，逐字符取长度 n 的片段
-    return [text[i:i+n] for i in range(len(text) - n + 1)]
+    return [text[i : i + n] for i in range(len(text) - n + 1)]
+
 
 # 优化：counts 改用 Counter
 def counts(tokens: list[str]) -> dict[str, int]:
