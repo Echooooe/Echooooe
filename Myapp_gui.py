@@ -9,9 +9,12 @@ def generate():
         r = int(entry_r.get())
         exercises, answers = generate_exercises(n, r)
         with open("Exercises.txt", "w", encoding="utf-8") as f:
-            f.writelines(line + "\n" for line in exercises)
+            for i, line in enumerate(exercises, start=1):
+                f.write(f"{i}. {line}\n")
+
         with open("Answers.txt", "w", encoding="utf-8") as f:
-            f.writelines(line + "\n" for line in answers)
+            for i, line in enumerate(answers, start=1):
+                f.write(f"{i}. {line}\n")
         messagebox.showinfo("完成", f"生成 {n} 道题目成功！\n文件已保存至当前目录。")
     except Exception as e:
         messagebox.showerror("错误", f"生成失败：{e}")

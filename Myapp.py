@@ -267,28 +267,57 @@ def format_fraction_output(fr: Fraction) -> str:
     return f"{sign}{n}/{d}"
 
 
+def strip_number_prefix(s: str) -> str:
+    """
+    去掉行首的编号前缀 '1. ' 或 '10. ' 等。
+    例如 '1. 3/5 + 1/2 =' -> '3/5 + 1/2 ='
+    """
+    return re.sub(r'^\s*\d+\.\s*', '', s)
+
+
 def grade(exfile, ansfile):
     """批改模式：读取题目与答案文件，逐题比对，输出 Grade.txt"""
     with open(exfile, 'r', encoding='utf-8') as f:
         exercises = [line.strip() for line in f if line.strip()]
     with open(ansfile, 'r', encoding='utf-8') as f:
         answers = [line.strip() for line in f if line.strip()]
+
     m = min(len(exercises), len(answers))
     correct_idx, wrong_idx = [], []
 
     for i in range(m):
-        line = exercises[i]
+        # 去掉题目前的编号
+        line = strip_number_prefix(exercises[i])
         expr_text = line[:-1].strip() if line.endswith('=') else line
+
+        # 计算正确结果（Fraction）
         try:
             got = parse_and_eval(expr_text)
-            got_str = format_fraction_output(got)
         except Exception:
-            got_str = 'ERROR'
-        if i < len(answers) and answers[i].strip() == got_str:
+            wrong_idx.append(i + 1)
+            continue
+
+        # 取答案并去掉编号前缀
+        ans_str = strip_number_prefix(answers[i]).strip()
+
+        # 把答案解析为 Fraction（支持带分数、真分数和整数）
+        try:
+            # parse_and_eval 已支持带分数形式 (e.g. 2'3/8)
+            ans_val = parse_and_eval(ans_str)
+        except Exception:
+            try:
+                ans_val = parse_mixed_fraction(ans_str)
+            except Exception:
+                wrong_idx.append(i + 1)
+                continue
+
+        # 数值比较（Fraction 直接比较）
+        if got == ans_val:
             correct_idx.append(i + 1)
         else:
             wrong_idx.append(i + 1)
 
+    # 多余答案也算错误
     for j in range(m, len(answers)):
         wrong_idx.append(j + 1)
 
@@ -296,6 +325,19 @@ def grade(exfile, ansfile):
         f.write(f"Correct: {len(correct_idx)} ({', '.join(map(str, correct_idx))})\n\n")
         f.write(f"Wrong: {len(wrong_idx)} ({', '.join(map(str, wrong_idx))})\n")
     print('Grade.txt 已生成')
+
+def parse_mixed_fraction(s):
+    """解析带分数如 3'2/5、分数 2/3、整数 5 等为 Fraction"""
+    s = s.strip()
+    if "'" in s:  # 带分数
+        whole, frac = s.split("'")
+        num, den = frac.split("/")
+        return Fraction(int(whole) * int(den) + int(num), int(den))
+    elif "/" in s:  # 分数
+        num, den = s.split("/")
+        return Fraction(int(num), int(den))
+    else:  # 整数
+        return Fraction(int(s), 1)
 
 
 # ============================================================
@@ -360,9 +402,12 @@ def main():
 
     exercises, answers = generate_exercises(args.n, args.r)
     with open('Exercises.txt', 'w', encoding='utf-8') as f:
-        f.writelines(line + '\n' for line in exercises)
+        for i, line in enumerate(exercises, start=1):
+            f.write(f"{i}. {line}\n")
+
     with open('Answers.txt', 'w', encoding='utf-8') as f:
-        f.writelines(line + '\n' for line in answers)
+        for i, line in enumerate(answers, start=1):
+            f.write(f"{i}. {line}\n")
     print('Exercises.txt, Answers.txt 已生成')
 
 
