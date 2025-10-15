@@ -38,21 +38,21 @@ class Number(Expr):
         self.frac = frac
     def eval(self):
         return self.frac
+
     def to_str(self):
-        # 输出要求：真分数用 3/5，带分数用 2'3/8
-        if self.frac.denominator == 1:
-            return str(self.frac.numerator)
-        n = abs(self.frac.numerator)
-        d = self.frac.denominator
-        if abs(self.frac) > 1 and n > d:
-            # 带分数
-            whole = n // d
-            rem = n % d
-            sign = "-" if self.frac < 0 else ""
-            return f"{sign}{whole}'{rem}/{d}"
-        else:
-            sign = "-" if self.frac < 0 else ""
-            return f"{sign}{n}/{d}"
+        l = self.left.to_str()
+        r = self.right.to_str()
+
+        if self.needs_paren_left():
+            l = f"({l})"
+        if self.needs_paren_right():
+            r = f"({r})"
+
+        # 新增：如果是除法且右边是分数或含 / 的表达式，就额外加括号
+        if self.op == '/' and '/' in r and not r.startswith('('):
+            r = f"({r})"
+
+        return f"{l} {self.op} {r}"
     def canonical(self):
         return self.to_str()
 
