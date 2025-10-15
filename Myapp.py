@@ -2,8 +2,8 @@
 """
 四则运算题目生成与批改程序
 用法示例：
-  生成题目： python Arithmetic_Generator.py -n 10 -r 10
-  批改题目： python Arithmetic_Generator.py -e Exercises.txt -a Answers.txt
+  生成题目： python Myapp.py -n 10 -r 10
+  批改题目： python Myapp.py -e Exercises.txt -a Answers.txt
 
 输出：
   - 生成模式：Exercises.txt, Answers.txt
