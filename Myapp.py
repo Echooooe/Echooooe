@@ -188,44 +188,61 @@ def validate_tree(node: Expr) -> bool:
 
 
 def gen_expr_with_ops(k, rng):
-    """生成包含 k 个运算符的随机表达式"""
-    leaves = [gen_number(rng) for _ in range(k + 1)]
+    """生成包含 k 个运算符的随机表达式（优化版）"""
+    # 预先生成叶子节点及其值缓存
+    leaves = []
+    for _ in range(k + 1):
+        node = gen_number(rng)
+        leaves.append((node, node.eval()))  # 缓存 (节点, 值)
     nodes = leaves[:]
     tries = 0
 
     while len(nodes) > 1 and tries < MAX_TRIES:
         tries += 1
-        i, j = random.sample(range(len(nodes)), 2)
-        left, right = nodes[i], nodes[j]
+        # ✅ 改进：randrange 代替 sample，减少构造 range 的开销
+        i = random.randrange(len(nodes))
+        j = random.randrange(len(nodes))
+        while j == i:
+            j = random.randrange(len(nodes))
+
+        left, lv = nodes[i]
+        right, rv = nodes[j]
         op = random.choice(['+', '-', '*', '/'])
+
+        # ✅ 提前剪枝非法运算（避免创建 Binary 再 eval）
+        if op == '-':
+            if lv < rv:
+                left, right, lv, rv = right, left, rv, lv
+            if lv < rv:
+                continue
+            val = lv - rv
+        elif op == '/':
+            if rv == 0:
+                continue
+            val = lv / rv
+            if val.denominator == 1:  # 排除整除
+                continue
+        elif op == '+':
+            val = lv + rv
+        else:  # op == '*'
+            val = lv * rv
+
         node = Binary(op, left, right)
 
-        # 处理减法与除法的合法性
-        if op == '-':
-            if left.eval() < right.eval():
-                node = Binary(op, right, left)
-                if node.left.eval() < node.right.eval():
-                    continue
-        if op == '/':
-            if right.eval() == 0:
-                if left.eval() == 0:
-                    continue
-                node = Binary(op, right, left)
-            a, b = node.left.eval(), node.right.eval()
-            if b == 0 or (a / b).denominator == 1:
-                continue
-
-        # 删除已合并节点
+        # 删除旧节点并加入新节点
         for idx in sorted([i, j], reverse=True):
             del nodes[idx]
-        nodes.append(node)
+        nodes.append((node, val))
 
     if len(nodes) != 1:
         return None
-    root = nodes[0]
+    root = nodes[0][0]
+
+    # ✅ 只在最终验证一次
     if not validate_tree(root):
         return None
     return root
+
 
 
 def generate_exercises(n, rng):
