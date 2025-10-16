@@ -107,7 +107,11 @@ class Binary(Expr):
         if self.op == '/' and '/' in r and not r.startswith('('):
             r = f"({r})"
 
-        return f"{l} {self.op} {r}"
+        op_display = self.op
+        if self.op == '/':
+            op_display = '÷'  # 输出使用 ÷
+
+        return f"{l} {op_display} {r}"
 
     def _flatten(self, op):
         """将同类型运算符的树展开（如 a+(b+c)→[a,b,c]）"""
@@ -341,13 +345,15 @@ def parse_mixed_fraction(s):
 
 
 # ============================================================
-# 表达式解析与执行（用于批改）
+# 表达式解析与执行（用于批改）a
 # ============================================================
 
 TOKEN_REGEX = re.compile(r"(\d+'\d+/\d+|\d+/\d+|\d+|[()+\-*/])")
 
 def parse_and_eval(s: str) -> Fraction:
     """解析题目字符串并计算结果"""
+    # 将 ÷ 转为 /，保证兼容题目中的除法符号
+    s = s.replace('÷', '/')
     tokens = TOKEN_REGEX.findall(s.replace(' ', ''))
 
     # 将带分数转为括号形式 (a + b/c)
@@ -374,6 +380,7 @@ def parse_and_eval(s: str) -> Fraction:
     # 安全求值，仅允许 Fraction 类型
     val = eval(expr, {'Fraction': Fraction})
     return val
+
 
 
 # ============================================================
